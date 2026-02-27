@@ -1,0 +1,208 @@
+/* Общий фон с параллакс-анимацией */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #1f1c2c, #4b3e5b);
+  overflow-x: hidden;
+}
+
+.background {
+  position: fixed;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 70%);
+  animation: rotateBG 120s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotateBG {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px;
+  text-align: center;
+  color: #fff;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+}
+
+/* Контролы */
+.controls, .filters {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+input {
+  padding: 12px;
+  border-radius: 15px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+input:focus {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255,255,255,0.6);
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+  color: white;
+  transition: transform 0.2s, box-shadow 0.3s;
+  animation: pulse 2s infinite;
+}
+
+button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 rgba(255,75,43,0.5); }
+  50% { box-shadow: 0 0 20px rgba(255,75,43,0.7); }
+  100% { box-shadow: 0 0 0 rgba(255,75,43,0.5); }
+}
+
+/* Сетка карточек */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+/* Карточки с 3D эффектом и анимацией */
+.card {
+  background: linear-gradient(145deg, #2a1c2b, #5b3e7b);
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.card.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.card.added {
+  animation: bounce 0.5s;
+}
+
+@keyframes bounce {
+  0% { transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.card:hover {
+  transform: scale(1.08) rotateY(5deg);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+
+.card img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.card img:hover {
+  transform: scale(1.1);
+}
+
+.card h3 {
+  margin: 10px 0 5px;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.card p {
+  margin: 0 0 10px;
+  color: #ccc;
+}
+/* ===== ULTRA ANIMATION ===== */
+
+.card{
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  background: radial-gradient(circle at var(--x,50%) var(--y,50%), 
+  rgba(255,65,108,0.4), transparent 60%);
+  opacity:0;
+  transition:0.3s;
+}
+
+.card:hover::before{
+  opacity:1;
+}
+
+.card.show{
+  animation: cinematic 0.8s ease forwards;
+}
+
+@keyframes cinematic{
+  from{
+    opacity:0;
+    transform: scale(0.8) rotateX(10deg);
+    filter: blur(10px);
+  }
+  to{
+    opacity:1;
+    transform: scale(1) rotateX(0);
+    filter: blur(0);
+  }
+}
+
+/* Ripple */
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,0.6);
+  transform:scale(0);
+  animation:rippleAnim 0.6s linear;
+  pointer-events:none;
+}
+
+@keyframes rippleAnim{
+  to{
+    transform:scale(4);
+    opacity:0;
+  }
+}
+
+/* Cursor Glow */
+.cursor-glow{
+  position:fixed;
+  width:200px;
+  height:200px;
+  border-radius:50%;
+  pointer-events:none;
+  background:radial-gradient(circle, rgba(255,65,108,0.4) 0%, transparent 70%);
+  transform:translate(-50%,-50%);
+  z-index:0;
+}
