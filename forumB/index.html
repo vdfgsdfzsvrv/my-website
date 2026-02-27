@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎬 Моя коллекция фильмов</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+ /* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:0.4s;
+  z-index:1000;
+}
+
+.modal.active{
+  opacity:1;
+  pointer-events:all;
+}
+
+.modal-content{
+  width:90%;
+  max-width:800px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  padding:30px;
+  transform:scale(0.7);
+  transition:0.4s;
+  box-shadow:0 0 50px rgba(255,65,108,0.7);
+}
+
+.modal.active .modal-content{
+  transform:scale(1);
+}
+
+.close{
+  position:absolute;
+  top:20px;
+  right:30px;
+  font-size:30px;
+  cursor:pointer;
+}
+
+.theme-toggle{
+  position:fixed;
+  top:20px;
+  right:20px;
+  padding:10px 15px;
+  border-radius:20px;
+  cursor:pointer;
+  background:#ff416c;
+}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background: linear-gradient(-45deg,#0f0c29,#302b63,#24243e,#ff416c);
+  background-size:400% 400%;
+  animation: gradientBG 12s ease infinite;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:white;
+}
+
+@keyframes gradientBG{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+h1{
+  margin-top:40px;
+  font-size:38px;
+  font-weight:700;
+  text-shadow:0 0 20px rgba(255,255,255,0.5);
+  animation: fadeDown 1s ease;
+}
+
+@keyframes fadeDown{
+  from{opacity:0; transform:translateY(-40px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+.container{
+  margin-top:30px;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+input{
+  padding:12px 18px;
+  border:none;
+  border-radius:30px;
+  outline:none;
+  font-size:14px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  color:white;
+  transition:0.3s;
+}
+
+input:focus{
+  background:rgba(255,255,255,0.2);
+  box-shadow:0 0 15px #ff416c;
+}
+
+button{
+  padding:12px 22px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(45deg,#ff416c,#ff4b2b);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.4s;
+  box-shadow:0 5px 20px rgba(255,65,108,0.5);
+}
+
+button:hover{
+  transform:scale(1.1);
+  box-shadow:0 8px 30px rgba(255,65,108,0.8);
+}
+
+.cards{
+  margin-top:50px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+  width:90%;
+  max-width:1200px;
+}
+
+.card{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,0.4);
+  transition:0.6s;
+  transform:translateY(50px);
+  opacity:0;
+  animation:fadeUp 0.8s forwards;
+}
+
+.card:nth-child(1){animation-delay:0.2s;}
+.card:nth-child(2){animation-delay:0.4s;}
+.card:nth-child(3){animation-delay:0.6s;}
+
+@keyframes fadeUp{
+  to{opacity:1; transform:translateY(0);}
+}
+
+.card:hover{
+  transform:scale(1.07) rotateX(5deg);
+  box-shadow:0 15px 50px rgba(255,65,108,0.6);
+}
+
+.card img{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  transition:0.5s;
+}
+
+.card:hover img{
+  transform:scale(1.1);
+}
+
+.card-content{
+  padding:20px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.card p{
+  opacity:0.8;
+}
+
+.selected{
+  outline:3px solid #ff416c;
+  transform:scale(1.1);
+}
+
+</style>
+</head>
+<body>
+
+<h1>🎬 Моя коллекция фильмов</h1>
+
+<div class="container">
+  <input type="text" id="title" placeholder="Название фильма">
+  <input type="text" id="genre" placeholder="Жанр">
+  <input type="text" id="img" placeholder="URL изображения">
+  <button id="addBtn">Добавить</button>
+</div>
+
+<div class="cards" id="cardsContainer"></div>
+
+<script>
+
+let collection = [
+  {
+    title:"Титаник",
+    genre:"Драма",
+    img:"https://i.imgur.com/2TeJf9K.jpg"
+  },
+  {
+    title:"Начало",
+    genre:"Триллер",
+    img:"https://i.imgur.com/YoHpV3Z.jpg"
+  },
+  {
+    title:"Интерстеллар",
+    genre:"Фантастика",
+    img:"https://i.imgur.com/EuFp4Fh.jpg"
+  }
+];
+
+const container = document.getElementById("cardsContainer");
+
+function render(){
+  container.innerHTML="";
+  collection.forEach(movie=>{
+    container.innerHTML+=`
+      <div class="card">
+        <img src="${movie.img}">
+        <div class="card-content">
+          <h3>${movie.title}</h3>
+          <p>${movie.genre}</p>
+        </div>
+      </div>
+    `;
+  });
+}
+
+render();
+
+document.getElementById("addBtn").addEventListener("click",()=>{
+  const title=document.getElementById("title").value;
+  const genre=document.getElementById("genre").value;
+  const img=document.getElementById("img").value;
+
+  if(title && genre && img){
+    collection.push({title,genre,img});
+    render();
+  }
+});
+
+container.addEventListener("click",(e)=>{
+  let card=e.target.closest(".card");
+  if(card){
+    document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));
+    card.classList.add("selected");
+  }
+});
+
+</script>
+<div class="theme-toggle" id="themeBtn">🌙</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">✖</span>
+    <h2 id="modalTitle"></h2>
+    <p id="modalGenre"></p>
+    <br>
+    <iframe id="trailerFrame" width="100%" height="400" 
+      src="" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
+</body>
+</html>
